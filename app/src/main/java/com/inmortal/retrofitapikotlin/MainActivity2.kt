@@ -1,32 +1,41 @@
 package com.inmortal.retrofitapikotlin
 
 import RetrofitClient
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.gson.JsonObject
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 
 class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         PostApiAboutTrip()
-        getMyTripLIst()
+//        getMyTripLIst()
+        getMyTripListVolley()
     }
 
-    private  fun PostApiAboutTrip(){
+    private fun PostApiAboutTrip() {
 
 
-        val call: Call<JsonObject>? = RetrofitClient.instance?.api?.privacyPolicy("28.61298929","77.37764774")
+        val call: Call<JsonObject>? =
+            RetrofitClient.instance?.api?.privacyPolicy("28.61298929", "77.37764774")
         call?.enqueue(object : Callback<JsonObject?> {
             override fun onResponse(
                 call: Call<JsonObject?>, response: Response<JsonObject?>
             ) {
-                Log.d("dsfdsf",response.body().toString())
+                Log.d("dsfdsf", response.body().toString())
 
 //                binding.pbPriPol.setVisibility(View.GONE)
 //                val policyModel: JsonObject? = response.body()
@@ -50,8 +59,10 @@ class MainActivity2 : AppCompatActivity() {
         })
 
     }
-    private  fun getMyTripLIst(){
+
+        private  fun getMyTripLIst(){
         val call:Call<JsonObject>? =RetrofitClient.instance?.api?.getMyTripList()
+
         call?.enqueue(object : Callback<JsonObject?> {
             override fun onResponse(
                 call: Call<JsonObject?>, response: Response<JsonObject?>
@@ -80,6 +91,44 @@ class MainActivity2 : AppCompatActivity() {
         })
 
     }
+    private fun getMyTripListVolley(){
+        val url="https://inmortaltech.com/Urplan/getHotelList"
+      var requestQue: RequestQueue=Volley.newRequestQueue(this)
 
+        val stringRequest: StringRequest = object : StringRequest(
+            Method.POST,url ,
+            com.android.volley.Response.Listener { response ->
+
+
+                    val jsonObject = JSONObject(response)
+                Toast.makeText(this,""+response,Toast.LENGTH_SHORT).show()
+                    val status = jsonObject.getString("status")
+                    if (status == "true") {
+                        val jsonArray = jsonObject.getJSONArray("data")
+                        for (i in 0 until jsonArray.length()) {
+                            val `object` = jsonArray.getJSONObject(i)
+                            val name = `object`.getString("name")
+                            val address = `object`.getString("address")
+                            val ratings = `object`.getString("rating")
+                            Log.d("ffddg", name)
+
+                        }
+                    }
+
+            },
+            com.android.volley.Response.ErrorListener { }
+        ) {
+            override fun getParams(): Map<String, String>? {
+                val params: MutableMap<String, String> = HashMap()
+                params["latitude"] = "28.61298929"
+                params["logitude"] = "77.37764774"
+                return params
+            }
+        }
+        requestQue.add(stringRequest)
+
+
+
+    }
 
 }

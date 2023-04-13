@@ -1,7 +1,9 @@
 package com.inmortal.retrofitapikotlin
 
 import RetrofitClient
+import android.content.Context
 import android.os.Bundle
+import android.text.PrecomputedText.Params
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -18,12 +20,13 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity2 : AppCompatActivity() {
+    lateinit var context:Context
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         PostApiAboutTrip()
 //        getMyTripLIst()
-        getMyTripListVolley()
+//        getMyTripListVolley()
     }
 
     private fun PostApiAboutTrip() {
@@ -36,6 +39,7 @@ class MainActivity2 : AppCompatActivity() {
                 call: Call<JsonObject?>, response: Response<JsonObject?>
             ) {
                 Log.d("dsfdsf", response.body().toString())
+                Toast.makeText(this@MainActivity2, ""+response.body().toString(), Toast.LENGTH_LONG).show()
 
 //                binding.pbPriPol.setVisibility(View.GONE)
 //                val policyModel: JsonObject? = response.body()
@@ -61,6 +65,7 @@ class MainActivity2 : AppCompatActivity() {
     }
 
         private  fun getMyTripLIst(){
+
         val call:Call<JsonObject>? =RetrofitClient.instance?.api?.getMyTripList()
 
         call?.enqueue(object : Callback<JsonObject?> {
@@ -93,8 +98,7 @@ class MainActivity2 : AppCompatActivity() {
     }
     private fun getMyTripListVolley(){
         val url="https://inmortaltech.com/Urplan/getHotelList"
-      var requestQue: RequestQueue=Volley.newRequestQueue(this)
-
+      val requestQue: RequestQueue=Volley.newRequestQueue(this)
         val stringRequest: StringRequest = object : StringRequest(
             Method.POST,url ,
             com.android.volley.Response.Listener { response ->
@@ -116,7 +120,10 @@ class MainActivity2 : AppCompatActivity() {
                     }
 
             },
-            com.android.volley.Response.ErrorListener { }
+            com.android.volley.Response.ErrorListener {
+
+
+            }
         ) {
             override fun getParams(): Map<String, String>? {
                 val params: MutableMap<String, String> = HashMap()

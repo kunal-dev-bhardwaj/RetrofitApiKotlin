@@ -2,7 +2,7 @@
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitClient private constructor() {
+class RetrofitClient  {
     init { //constructor
         retrofit =
             Retrofit.Builder().baseUrl(base_url2).addConverterFactory(GsonConverterFactory.create())
@@ -17,7 +17,7 @@ class RetrofitClient private constructor() {
         private var retrofitClient: RetrofitClient? = null
         private lateinit var retrofit: Retrofit
 
-        @get:Synchronized
+
         val instance: RetrofitClient?
             get() {
                 if (retrofitClient == null) {
